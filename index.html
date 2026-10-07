@@ -1,0 +1,30 @@
+<input type="file" id="ipaUploader" accept=".ipa">
+<button onclick="uploadApp()">Run App</button>
+
+<iframe id="simulator" src="" width="378px" height="800px" style="display:none;"></iframe>
+
+<script>
+async function uploadApp() {
+    const fileInput = document.getElementById('ipaUploader');
+    if (!fileInput.files[0]) return alert("Please select an .ipa file first!");
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    // Send the file to YOUR backend server (NOT directly to Appetize)
+    const response = await fetch('https://your-backend-server.com', {
+        method: 'POST',
+        body: formData
+    });
+
+    const data = await response.json();
+    
+    if (data.publicKey) {
+        const iframe = document.getElementById('simulator');
+        iframe.src = `https://appetize.io{data.publicKey}?device=iphone14pro`;
+        iframe.style.display = "block";
+    } else {
+        alert("Upload failed.");
+    }
+}
+</script>
